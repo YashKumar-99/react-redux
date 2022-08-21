@@ -1,24 +1,37 @@
-import logo from './logo.svg';
+
 import './App.css';
+import Navbar from './components/Navbar';
+import CartContainer from './components/CartContainer';
+import { useSelector, useDispatch } from 'react-redux/es/exports';
+import { calculateTotals, getCartItems } from './Features/cart/cartSlice';
+import { useEffect } from 'react';
+import EmptyCart from './components/EmptyCart';
 
 function App() {
+
+  const { cartItems, isLoading, amount } = useSelector((store) => store.cart)
+
+  const Dispatch = useDispatch();
+  useEffect(() => {
+    Dispatch(calculateTotals());
+  }, [cartItems])
+
+  useEffect(() => {
+    Dispatch(getCartItems());
+  }, [])
+
+  if(isLoading){
+    return(<>
+          <Navbar />  
+          <h2 style={{textAlign:'center',marginTop:'5%'}}>Please wait , data is isLoading...</h2>
+    </>)
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Navbar /> 
+        {(amount > 0) ? <CartContainer /> : <EmptyCart />}
+    </>
   );
 }
 
